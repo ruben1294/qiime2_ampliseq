@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=ampliseq_maestro
+#SBATCH --account=metagenomica
+#SBATCH --partition=cicese
+#SBATCH --nodelist=nodo5
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=4G
+#SBATCH --time=72:00:00
+#SBATCH --output=registros/ampliseq_maestro_%j.out
+#SBATCH --error=registros/ampliseq_maestro_%j.err
+# =============================================================================
+#  lanzar_hpc.slurm
+#  Autor: Rubén Castañeda-Martínez
+# -----------------------------------------------------------------------------
+#  Lanza el pipeline en el HPC de OMICA (CICESE). El job maestro es un orquestador que corre en nodo5, Nextflow manda cada tarea a SLURM y esas tareas usan Docker
+#  en los nodos que lo tienen (al momento, solamente nodo27 y nodo28). Por eso el job maestro pide pocos
+#  recursos (2 CPU, 4 GB). Este debe mantenerse vivo durante todo el análisis.
+#
+#  Antes de iniciarlo:
+#    1) En configuracion/parametros.sh fija ENTORNO="hpc" y MARCADOR.
+#    2) Corre una vez scripts/00_instalar_dependencias.sh (crea el entorno conda
+#       con Nextflow + Java en el clúster).
+#    3) Genera la hoja de muestras: scripts/01_generar_samplesheet.sh
+#
+#  Uso (desde la raíz del repo):  sbatch scripts/lanzar_hpc.slurm
+# =============================================================================
+set -euo pipefail
+
+# Nos situamos en la raíz del repo (la carpeta desde donde se hizo sbatch)
+cd "${SLURM_SUBMIT_DIR:-$PWD}"
+
+echo "[maestro] nodo: $(hostname)  job: ${SLURM_JOB_ID:-?}"
+echo "[maestro] repo: $(pwd)"
+
+# conda debe estar en el PATH para que el script 03 active el entorno lanzador.
+# Si en tu clúster viene como módulo, descomenta y ajusta la línea siguiente:
+# module load conda-2023_metagenomica
+if ! command -v conda >/dev/null 2>&1; then
+    for base in "$HOME/miniforge3" "$HOME/miniconda3" "$HOME/anaconda3"; do
+        if [ -f "$base/etc/profile.d/conda.sh" ]; then
+            set +u; source "$base/etc/profile.d/conda.sh"; set -u
+            break
+        fi
+    done
+fi
+command -v conda >/dev/null 2>&1 \
+    || { echo "[maestro] no encontré conda. Cárgalo (module load) o instálalo antes de lanzar." >&2; exit 1; }
+
+# Corre el pipeline sin preguntar (-y). El script 03 lee ENTORNO y MARCADOR de
+# parametros.sh y arma el comando de Nextflow con -profile docker y la config del HPC.
+bash scripts/03_ejecutar_ampliseq.sh -y

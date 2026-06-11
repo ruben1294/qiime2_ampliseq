@@ -1,0 +1,17 @@
+# =============================================================================
+#  marcador_16s.yaml
+#  Autor: Rubén Castañeda-Martínez
+# -----------------------------------------------------------------------------
+#  Parámetros de nf-core/ampliseq para amplicones de 16S de procariotas. El
+#  script 03 lo pasa a Nextflow con -params-file cuando MARCADOR="16s". Ajusta
+#  los primers y la base de datos a tu experimento; el catálogo está en
+#  primers_16S.tsv.
+# =============================================================================
+
+# Primers (por defecto 515F / 806R, región V4)
+FW_primer: "GTGYCAGCMGCCGCGGTAA"
+RV_primer: "GGACTACNVGGGTWTCTAAT"
+
+# Base de datos taxonómica para 16S:
+#   silva=138 (lo habitual). Otras opciones: gtdb, greengenes2, rdp
+dada_ref_taxonomy: "silva=138"

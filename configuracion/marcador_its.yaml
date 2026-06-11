@@ -1,0 +1,23 @@
+# =============================================================================
+#  marcador_its.yaml
+#  Autor: Rubén Castañeda-Martínez
+# -----------------------------------------------------------------------------
+#  Parámetros de nf-core/ampliseq para amplicones de ITS de hongos. El script 03
+#  lo pasa a Nextflow con -params-file cuando MARCADOR="its". Ajusta los primers
+#  y la base de datos a tu experimento; el catálogo está en primers_ITS.tsv.
+# =============================================================================
+
+# Primers (por defecto fITS7 / ITS4; confírmalos con quien hizo la secuenciación)
+FW_primer: "GTGARTCATCGAATCTTTG"
+RV_primer: "TCCTCCGCTTATTGATATGC"
+
+# Región que recorta ITSx antes de clasificar: its1, its2 o full
+cut_its: "its2"
+
+# Base de datos taxonómica (específica de hongos/ITS):
+#   unite-fungi (solo hongos) o unite-alleuk (todos los eucariotas)
+#   versiones: 10.0 (más reciente), 9.0, 8.3, 8.2
+dada_ref_taxonomy: "unite-fungi=10.0"
+
+# Asignar también las hipótesis de especie (SH) de UNITE
+addsh: true

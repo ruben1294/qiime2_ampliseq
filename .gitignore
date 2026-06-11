@@ -1,0 +1,67 @@
+#
+# Nextflow (motor de ejecución)
+.nextflow/
+.nextflow.log*
+.nextflow.pid
+work/
+report-*.html
+timeline-*.html
+trace-*.txt
+dag-*.html
+
+# Resultados y registros (se generan en cada corrida)
+resultados/*
+!resultados/.gitkeep
+registros/*
+!registros/.gitkeep
+
+# Cachés de contenedores y de conda (muy pesadas, GB)
+.cache/
+.singularity/
+singularity/
+*.sif
+*.img
+
+# Datos crudos de secuenciación (nunca subir a GitHub)
+datos/crudos/*
+!datos/crudos/LEEME.txt
+# Por si hay datos en otras rutas, también se ignoran por extensión:
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.sam
+*.cram
+*.bai
+*.crai
+*.sra
+
+# Bases de datos y secuencias grandes
+# (si necesitas versionar un FASTA pequeño, añádelo con  !ruta/archivo.fasta)
+*.fasta
+*.fa
+*.fna
+*.udb
+
+# Artefactos y tablas de salida
+*.qza        # artefactos de QIIME2
+*.qzv        # visualizaciones de QIIME2
+*.biom
+*.h5
+*.rds        # objetos de R
+
+# Hoja de muestras generada (tiene rutas absolutas de esta máquina)
+configuracion/samplesheet.tsv
+
+# Editor / sistema operativo
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Temporales
+*.tmp
+tmp/
