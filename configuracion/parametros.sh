@@ -53,7 +53,7 @@ ENV_LANZADOR="ampliseq-lanzador"
 
 # 5) Versiones ancladas (clave para la reproducibilidad)
 VERSION_PIPELINE="2.17.0"     # versión de nf-core/ampliseq
-VERSION_NEXTFLOW=""           # Nextflow: vacío instala siempre la más reciente; ampliseq 2.17.0 pide >=25.04.8
+VERSION_NEXTFLOW=""           # Nextflow: vacío instala siempre la más reciente, ampliseq 2.17.0 pide >=25.04.8
 
 
 # 6) Datos de entrada (los FASTQ de secuenciación)
