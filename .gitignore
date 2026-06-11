@@ -9,11 +9,11 @@ timeline-*.html
 trace-*.txt
 dag-*.html
 
-# Resultados y registros (se generan en cada corrida)
+# Resultados y logs (se generan en cada corrida)
 resultados/*
 !resultados/.gitkeep
-registros/*
-!registros/.gitkeep
+logs/*
+!logs/.gitkeep
 
 # Cachés de contenedores y de conda (muy pesadas, GB)
 .cache/

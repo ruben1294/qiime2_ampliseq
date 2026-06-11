@@ -57,7 +57,7 @@ log_debug() { printf '%s[%s] [DEBUG] %s%s\n' "$C_DEBUG" "$(date '+%Y-%m-%d %H:%M
 # LOG_OUT y LOG_ERR.
 iniciar_registro() {
     local nombre="${1:?iniciar_registro: falta el nombre base del log}"
-    local dir_logs="${2:-registros}"
+    local dir_logs="${2:-${DIR_LOGS:-logs}}"
 
     SELLO="${SELLO:-$(date +%Y%m%d_%H%M%S)}"
     mkdir -p "$dir_logs"

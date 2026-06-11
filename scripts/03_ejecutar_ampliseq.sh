@@ -52,7 +52,7 @@ command -v nextflow >/dev/null 2>&1 || { log_error "Nextflow no disponible. Corr
 # Guardamos cachés en el disco grande, para no llenar el disco del sistema
 export NXF_SINGULARITY_CACHEDIR="$DIR_PROYECTO/.cache/singularity"
 export NXF_CONDA_CACHEDIR="$DIR_PROYECTO/.cache/conda"
-mkdir -p "$NXF_SINGULARITY_CACHEDIR" "$NXF_CONDA_CACHEDIR" registros "$SALIDA"
+mkdir -p "$NXF_SINGULARITY_CACHEDIR" "$NXF_CONDA_CACHEDIR" "$DIR_LOGS" "$SALIDA"
 
 # 1) Validaciones básicas
 case "$MOTOR" in
@@ -98,10 +98,11 @@ fi
 # 2) Leemos lo necesario para validar y mostrar del archivo YAML
 FW="$(leer_yaml FW_primer "$CONFIG_MARCADOR")"
 RV="$(leer_yaml RV_primer "$CONFIG_MARCADOR")"
-REGION="$(leer_yaml cut_its "$CONFIG_MARCADOR")"          # vacío en 16S
-TAXONOMIA="$(leer_yaml dada_ref_taxonomy "$CONFIG_MARCADOR")"
+REGION="$(leer_yaml cut_its "$CONFIG_MARCADOR")"          # vacío en 16S y 18S
+TAXONOMIA="$(leer_taxonomia "$CONFIG_MARCADOR")"          # PR2/DADA2, SILVA/QIIME2, etc.
 
 [ -z "$FW" ] && { log_error "FW_primer vacío en $CONFIG_MARCADOR"; exit 1; }
+[ -z "$TAXONOMIA" ] && log_warn "no hay base taxonómica activa en $CONFIG_MARCADOR (define dada_ref_taxonomy o qiime_ref_taxonomy)"
 if [ "$DISENO_LECTURAS" = "paired" ] && [ -z "$RV" ]; then
     log_error "RV_primer vacío para diseño pareado. Revisa $CONFIG_MARCADOR"; exit 1
 fi
@@ -165,7 +166,7 @@ log_info "    ${CMD[*]}"
 log_info "=========================================================================="
 
 # Guardamos el comando exacto, para efectos de reproducibilidad y trazabilidad
-echo "${CMD[*]}" > "registros/comando_${SELLO}.txt"
+echo "${CMD[*]}" > "$DIR_LOGS/comando_${SELLO}.txt"
 
 if [ "$DRY_RUN" = "si" ]; then
     log_info "[--dry-run] Todo preparado. No se ejecutó Nextflow."

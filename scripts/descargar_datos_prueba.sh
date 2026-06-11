@@ -3,10 +3,12 @@
 #  descargar_datos_prueba.sh
 #  Autor: Rubén Castañeda-Martínez
 # -----------------------------------------------------------------------------
-#  Baja un set de datos pequeño y estándar (nf-core/test-datasets) para probar
+#  Descarga un conjunto de datos pequeño y estándar (nf-core/test-datasets) para probar
 #  el flujo de punta a punta. Elige el caso según el marcador:
-#    16s → 16S pareado (primers 515F/806R, igual que marcador_16s.yaml)
-#    its → ITS single-end de Illumina (3 muestras)
+#    16s: 16S pareado (primers 515F/806R, igual que marcador_16s.yaml)
+#    its: ITS single-end de Illumina (3 muestras)
+#  Para 18S no hay set de prueba incluido en nf-core/test-datasets, usa tus
+#  propios FASTQ (o el set 16s para una prueba, sin valor biológico).
 #  Los archivos se guardan en CARPETA_FASTQ y se renombran para que el script 01
 #  los reconozca. El entorno (local/hpc) es independiente: el mismo dato sirve.
 #
@@ -28,6 +30,7 @@ CASO=""; FORCE="no"
 for arg in "$@"; do
     case "$arg" in
         16s|its) CASO="$arg" ;;
+        18s) log_error "no hay set de prueba 18S en nf-core/test-datasets. Usa tus propios FASTQ, o baja el set 16s solo para probar la plomería del flujo."; exit 1 ;;
         --force) FORCE="si" ;;
         *) log_error "argumento desconocido: '$arg' (usa 16s o its, y --force)"; exit 1 ;;
     esac

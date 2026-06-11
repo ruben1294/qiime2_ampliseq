@@ -1,0 +1,8 @@
+# Catálogo de primers 18S estándar para metabarcoding de eucariotas
+# (referencia, copia las secuencias que uses a configuracion/marcador_18s.yaml)
+#
+# preset	region	primer_FW	secuencia_FW	primer_RV	secuencia_RV	referencia
+TAReuk-V4	V4	TAReuk454FWD1	CCAGCASCYGCGGTAATTCC	TAReukREV3	ACTTTCGTTCTTGATYRA	Stoeck2010
+Euk1391F-EukBr	V9	Euk1391F	GTACACACCGCCCGTC	EukBr	TGATCCTTCTGCAGGTTCACCTAC	Amaral-Zettler2009 (EMP)
+1389F-1510R	V9	1389F	TTGTACACACCGCCC	1510R	CCTTCYGCAGGTTCACCTAC	Amaral-Zettler2009
+18S_allshorts	V7	18S_allshorts_F	TTTGTCTGSTTAATTSCG	18S_allshorts_R	CACAGACCTGTTATTGC	Guardiola2015

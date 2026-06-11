@@ -4,7 +4,7 @@
 #  Autor: Rubén Castañeda-Martínez
 # -----------------------------------------------------------------------------
 #  Arma una tabla de tiempos por paso a partir del execution_trace_*.txt que
-#  genera Nextflow en resultados/pipeline_info/. Agrupa las tareas por proceso
+#  genera Nextflow en resultados/<PROYECTO>/pipeline_info/. Agrupa las tareas por proceso
 #  (DADA2, cutadapt, etc.), las ordena de mayor a menor tiempo y resume tareas,
 #  tiempo total y promedio, %cpu máximo y RAM pico. Es el equivalente a la tabla
 #  que antes armabas con 'time', pero por proceso y con más detalle.

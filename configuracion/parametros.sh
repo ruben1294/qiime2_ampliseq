@@ -8,39 +8,41 @@
 #
 #  Dos decisiones importantes gobiernan todo el flujo y cada una tiene su propio archivo:
 #    ENTORNO  (local o HPC): recursos en un .config  (sección 2)
-#    MARCADOR (ITS o 16S): parámetros en un .yaml  (sección 3)
+#    MARCADOR (ITS, 16S o 18S): parámetros en un .yaml  (sección 3)
 # =============================================================================
 
 
 # 1) Identidad del proyecto
-# Nombre corto del proyecto (solo para fines informativos, se guarda en los registros).
-PROYECTO="prueba_16S"
+# Nombre corto del proyecto. Nombra las subcarpetas de resultados y logs
+# (resultados/<PROYECTO>/ y logs/<PROYECTO>/, ver sección 8). Usa un nombre sin espacios.
+PROYECTO="prueba_ITS"
 
 
 # 2) Entorno de ejecución (local o HPC)
 # ¿En dónde vas a correr el pipeline?
 #   "local" = tu compu. Usa Docker y los núcleos de la máquina.
-#   "hpc"   = un clúster con SLURM. Manda las tareas a la cola; corren con Docker
+#   "hpc"   = un clúster con SLURM. Manda las tareas a la cola, corren con Docker
 #             en los nodos que lo tienen (en OMICA: nodo27 y nodo28).
 # Si lo dejas vacío, el script te preguntará al arrancar (00, 02 y 03).
 # Cada entorno tiene su propio archivo de recursos (ver sección 9).
 ENTORNO="local"
 
 
-# 3) Marcador a analizar (ITS o 16S)
+# 3) Marcador a analizar (ITS, 16S o 18S)
 # Qué amplicón vas a analizar:
-#   "its" = hongos (región ITS, base UNITE).
-#   "16s" = procariotas (gen 16S rRNA, base SILVA).
+#   "its" = hongos (región ITS).
+#   "16s" = procariotas (gen 16S rDNA).
+#   "18s" = eucariotas (gen 18S rDNA).
 # Si lo dejas vacío, el script te preguntará al arrancar (02 y 03).
 # Los parámetros de cada marcador (primers, base de datos, región) viven en su
-# propio archivo .yaml; edítalos ahí, no aquí (ver sección 9).
+# propio archivo .yaml. Edítalos ahí, no aquí (ver sección 9).
 MARCADOR="16s"
 
 
 # 4) Motor de ejecución (cómo se aíslan los programas)
 # Con "auto" el motor es Docker en local y en HPC (lo predeterminado). Solo
 # cámbialo si quieres forzar otro:
-#   "docker"      = contenedores Docker (local con integración WSL; en HPC corre
+#   "docker"      = contenedores Docker (local con integración WSL, en HPC corre
 #                   en los nodos de cómputo con Docker).
 #   "singularity" = contenedores Singularity (alternativa en HPC).
 #   "apptainer"   = sucesor de Singularity (alternativa en HPC).
@@ -85,8 +87,13 @@ METADATA=""
 
 
 # 8) Salida
-# Carpeta donde se guardan todos los resultados.
-SALIDA="resultados"
+# Carpeta de resultados. Cada proyecto va en su propia subcarpeta (resultados/<PROYECTO>/)
+# para que las corridas de distintos proyectos no se mezclen ni se sobrescriban.
+# El nombre lo toma de PROYECTO (sección 1).
+SALIDA="resultados/$PROYECTO"
+
+# Carpeta de logs de los scripts (.out, .err, comando y versiones), también por proyecto.
+DIR_LOGS="logs/$PROYECTO"
 
 
 # 9) Archivos de cada decisión (rara vez se cambian las rutas)
@@ -97,6 +104,7 @@ CONFIG_HPC="configuracion/recursos_hpc.config"
 # Parámetros por marcador (sección 3); el script elige según MARCADOR.
 CONFIG_ITS="configuracion/marcador_its.yaml"
 CONFIG_16S="configuracion/marcador_16s.yaml"
+CONFIG_18S="configuracion/marcador_18s.yaml"
 
 
 # 10) Parámetros extra (avanzado, opcional)

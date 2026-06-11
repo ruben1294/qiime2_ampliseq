@@ -8,8 +8,10 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
 #SBATCH --time=72:00:00
-#SBATCH --output=registros/ampliseq_maestro_%j.out
-#SBATCH --error=registros/ampliseq_maestro_%j.err
+# El log del maestro va a logs/ (no a logs/<PROYECTO>/): las directivas #SBATCH son
+# estáticas y no expanden $PROYECTO. El log del análisis sí queda en logs/<PROYECTO>/.
+#SBATCH --output=logs/ampliseq_maestro_%j.out
+#SBATCH --error=logs/ampliseq_maestro_%j.err
 # =============================================================================
 #  lanzar_hpc.slurm
 #  Autor: Rubén Castañeda-Martínez

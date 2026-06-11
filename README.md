@@ -1,21 +1,21 @@
-# Análisis de amplicones (ITS de hongos / 16S de procariotas) con nf-core/ampliseq
+# Análisis de amplicones (ITS de hongos / 16S de procariotas / 18S de microeucariotas) con nf-core/ampliseq
 
-Flujo para analizar amplicones a partir de secuenciación Illumina, con dos
-marcadores posibles: la región ITS (*Internal Transcribed Spacer*) de hongos o
-el gen 16S rDNA de procariotas.
+Flujo para analizar amplicones a partir de secuenciación Illumina, con tres
+marcadores posibles: la región ITS (*Internal Transcribed Spacer*) de hongos, el
+gen 16S rDNA de procariotas o el gen 18S rDNA de microeucariotas (protistas).
 
 Usa [nf-core/ampliseq](https://nf-co.re/ampliseq) (v2.17.0), que ejecuta:
 control de calidad (FastQC), eliminación de *primers* (cutadapt), inferencia de
-variantes de secuencia ASV (DADA2), recorte de la región ITS con ITSx (solo en
-ITS), clasificación taxonómica (UNITE para ITS, SILVA para 16S) y análisis de
-diversidad (QIIME2), con reportes finales (MultiQC y reporte resumen).
+_Amplicon Sequence Variants_ (ASVs) (DADA2), recorte de la región ITS con ITSx (solo en
+ITS), inferencia taxonómica (UNITE para ITS, SILVA para 16S, PR2 para 18S) y
+análisis de diversidad (QIIME2), con reportes finales (MultiQC y reporte resumen).
 
 Antes de correr el _pipeline_, hay dos decisiones importantes y cada una tiene su propio archivo:
 
 | Decisión | Opciones | Define | Archivo |
 |---|---|---|---|
 | **Entorno** | `local` / `hpc` | recursos y ejecutor | `recursos_<entorno>.config` (vía `-c`) |
-| **Marcador** | `its` / `16s` | primers y base de datos | `marcador_<marcador>.yaml` (vía `-params-file`) |
+| **Marcador** | `its` / `16s` / `18s` | primers y base de datos | `marcador_<marcador>.yaml` (vía `-params-file`) |
 
 ---
 
@@ -30,8 +30,10 @@ qiime2_ampliseq/
 │   ├── recursos_hpc.config            ← recursos, cola y nodos con Docker del HPC (SLURM)
 │   ├── marcador_its.yaml              ← parámetros del análisis de ITS (hongos)
 │   ├── marcador_16s.yaml              ← parámetros del análisis de 16S (procariotas)
+│   ├── marcador_18s.yaml              ← parámetros del análisis de 18S (microeucariotas)
 │   ├── primers_ITS.tsv                ← catálogo de primers ITS estándar
 │   ├── primers_16S.tsv                ← catálogo de primers 16S estándar
+│   ├── primers_18S.tsv                ← catálogo de primers 18S estándar
 │   └── samplesheet.tsv                ← (lo genera el script 01)
 ├── scripts/
 │   ├── 00_instalar_dependencias.sh    ← verifica e instala todo lo que falte
@@ -45,8 +47,8 @@ qiime2_ampliseq/
 ├── datos/crudos/                       ← ⬅️ pon aquí tus FASTQ (.fastq.gz)
 ├── metadatos/
 │   └── metadatos.tsv.ejemplo           ← plantilla de metadatos (QIIME2)
-├── resultados/                           ← resultados (se crean solos)
-└── registros/                              ← registros de cada ejecución
+├── resultados/<PROYECTO>/              ← resultados, una subcarpeta por proyecto (se crean solas)
+└── logs/<PROYECTO>/                    ← logs de cada corrida, también por proyecto (se crean solas)
 ```
 
 ---
@@ -73,12 +75,14 @@ sbatch scripts/lanzar_hpc.slurm
 
 Como alternativa, corre `bash scripts/03_ejecutar_ampliseq.sh` a mano desde nodo5 dentro de `tmux` o `screen`.
 
-### b) Marcador: `its` o `16s`
+### b) Marcador: `its`, `16s` o `18s`
 
 - **`its`** → hongos. Región ITS, base de datos predeterminada UNITE. Parámetros en
   `configuracion/marcador_its.yaml`.
 - **`16s`** → procariotas. Gen 16S rDNA, base de datos predeterminada SILVA. Parámetros en
   `configuracion/marcador_16s.yaml`.
+- **`18s`** → microeucariotas/protistas. Gen 18S rDNA, base de datos predeterminada PR2.
+  Parámetros en `configuracion/marcador_18s.yaml`.
 
 Cada marcador trae sus _primers_ y su base de datos en un archivo `.yaml` que se pasa a Nextflow con `-params-file`. Ahí es donde debes editar los parámetros del análisis.
 
@@ -135,21 +139,29 @@ El entorno (local o HPC) es independiente: el mismo dato sirve para ambos. La pr
 
 Cada archivo `marcador_*.yaml` define los parámetros propios del análisis. Edítalos según el análisis que quieras realizar:
 
-| Parámetro | ITS | 16S |
-|---|---|---|
-| `FW_primer` / `RV_primer` | _primers_ del laboratorio | _primers_ del laboratorio |
-| `cut_its` | `its1`, `its2` o `full` | (no aplica) |
-| `dada_ref_taxonomy` | `unite-fungi=10.0` | `silva=138` |
-| `addsh` | hipótesis de especie de UNITE | (no aplica) |
+| Parámetro | ITS | 16S | 18S |
+|---|---|---|---|
+| `FW_primer` / `RV_primer` | _primers_ del laboratorio | _primers_ del laboratorio | _primers_ del laboratorio |
+| `cut_its` | `its1`, `its2` o `full` | (no aplica) | (no aplica) |
+| `dada_ref_taxonomy` | `unite-fungi=10.0` | `silva=138` | `pr2=5.1.0` (o SILVA, ver nota) |
+| `addsh` | hipótesis de especie de UNITE | (no aplica) | (no aplica) |
 
-Puedes encontrar los catálogos de _primers_ estándar en `configuracion/primers_ITS.tsv` y `configuracion/primers_16S.tsv`. Copia las secuencias que uses al `.yaml`
+Puedes encontrar los catálogos de _primers_ estándar en `configuracion/primers_ITS.tsv`, `configuracion/primers_16S.tsv` y `configuracion/primers_18S.tsv`. Copia las secuencias que uses al `.yaml`
 que corresponda. Los _presets_ más comunes son:
 
 - **ITS:** `fITS7`/`ITS4` (ITS2), `ITS1F`/`ITS2` (ITS1), `ITS3`/`ITS4` (ITS2).
 - **16S:** `515F`/`806R` (V4), `341F`/`805R` (V3-V4), `27F`/`1492R` (completo).
+- **18S:** `TAReuk454FWD1`/`TAReukREV3` (V4), `Euk1391F`/`EukBr` (V9).
 
 > **Nota:** la base `dada_ref_taxonomy` debe corresponder al marcador (UNITE solo
-> sirve para ITS; SILVA, GTDB o Greengenes para 16S).
+> sirve para ITS; SILVA, GTDB o Greengenes para 16S; PR2 para 18S).
+>
+> **18S con SILVA:** la SILVA de DADA2 que trae ampliseq está optimizada para
+> Bacteria/Archaea y su documentación la marca *no apta para eucariotas*. Para
+> usar SILVA en 18S hay que ir por el clasificador de QIIME2: en
+> `marcador_18s.yaml`, comenta `dada_ref_taxonomy: "pr2=5.1.0"` y descomenta
+> `qiime_ref_taxonomy: "silva=138"` (la SILVA de QIIME2 es la combinada 16S/18S).
+> Esa vía es más lenta y pesada que PR2 con DADA2.
 
 ---
 
@@ -159,7 +171,7 @@ Todo el flujo es reanudable. Si se llegara a interrumpir, vuelve a correr el scr
 
 ## 5. Resultados principales
 
-Dentro de `resultados/` encontrarás (entre otros):
+Dentro de `resultados/<PROYECTO>/` encontrarás (entre otros):
 
 | Carpeta | Contenido |
 |---|---|
@@ -205,11 +217,12 @@ bash scripts/04_resumen_tiempos.sh        # usa el trace más reciente
 
 ## 7. Cómo citar
 
-Si usas este _pipeline_, cita a nf-core/ampliseq, DADA2, cutadapt, QIIME2, ITSx (en ITS) y la base de datos correspondiente. nf-core genera la lista de citas en `resultados/pipeline_info/`.
+Si usas este _pipeline_, cita a nf-core/ampliseq, DADA2, cutadapt, QIIME2, ITSx (en ITS) y la base de datos correspondiente. nf-core genera la lista de citas en `resultados/<PROYECTO>/pipeline_info/`.
 
 - nf-core: Ewels et al. (2020) *Nat Biotechnol*. https://nf-co.re/ampliseq
 - UNITE Community: https://unite.ut.ee
 - SILVA: Quast et al. (2013) *Nucleic Acids Res*. https://www.arb-silva.de
+- PR2: Guillou et al. (2013) *Nucleic Acids Res*. https://pr2-database.org
 
 Si este repo te ayudó, te agradecería una estrellita ⭐ y una cita:
 

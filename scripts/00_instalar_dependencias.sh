@@ -166,7 +166,7 @@ command -v nf-core >/dev/null 2>&1 && log_info "   nf-core  : $(nf-core --versio
 log_info "--------------------------------------------------------------------------"
 
 # 9) Guardamos un registro de versiones
-mkdir -p registros
+mkdir -p "$DIR_LOGS"
 {
     echo "# Registro de instalación: $(date -Is)"
     echo "Proyecto:        $PROYECTO"
@@ -184,8 +184,8 @@ mkdir -p registros
         singularity|apptainer) echo "Apptainer:       $(apptainer --version 2>&1 || echo n/d)" ;;
     esac
     command -v nf-core >/dev/null 2>&1 && echo "nf-core tools:   $(nf-core --version 2>&1 | head -1)"
-} > "registros/versiones_setup.txt"
-log_info "Registro de versiones guardado en registros/versiones_setup.txt"
+} > "$DIR_LOGS/versiones_setup.txt"
+log_info "Registro de versiones guardado en $DIR_LOGS/versiones_setup.txt"
 
 log_info "=========================================================================="
 log_info "¡Listo! Dependencias instaladas."
