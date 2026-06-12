@@ -74,8 +74,8 @@ if [ "$ENTORNO" = "hpc" ]; then
     fi
 fi
 
-# Motor de contenedores. En HPC el maestro (nodo5) solo orquesta y el motor corre
-# en los nodos de cómputo (nodo27, nodo28), así que no se exige aquí.
+# Motor de contenedores. En HPC el maestro (nodo5/27/28) solo orquesta y el motor
+# corre en los nodos de cómputo (nodo27, nodo28), así que no se exige aquí.
 case "$MOTOR" in
     docker)
         if [ "$ENTORNO" = "hpc" ]; then

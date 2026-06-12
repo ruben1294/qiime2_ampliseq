@@ -41,7 +41,8 @@ qiime2_ampliseq/
 │   ├── 02_verificar_entorno.sh        ← diagnóstico: verifica que todo esté listo
 │   ├── 03_ejecutar_ampliseq.sh        ← ejecuta el análisis
 │   ├── 04_resumen_tiempos.sh          ← arma la tabla de tiempos por proceso de la corrida
-│   ├── lanzar_hpc.slurm               ← job maestro para lanzar en el HPC
+│   ├── lanzar_hpc.sh                  ← lanza el job maestro en el HPC (elige nodo con hueco)
+│   ├── lanzar_hpc.slurm               ← script SLURM del job maestro (lo envía el wrapper)
 │   ├── descargar_datos_prueba.sh      ← baja un set pequeño y estándar para probar
 │   └── lib/                           ← funciones comunes (registro, entorno y marcador)
 ├── datos/crudos/                       ← ⬅️ pon aquí tus FASTQ (.fastq.gz)
@@ -64,15 +65,15 @@ Al iniciar, los scripts te preguntan dónde correrás el flujo y qué marcador a
 - **`hpc`** → un clúster con SLURM. Manda cada tarea a la cola y la corre con
   Docker, con `configuracion/recursos_hpc.config`.
 
-En el HPC de OMICA (CICESE) el motor es Docker, pero actualmente este solo está instalado en los siguientes nodos: nodo5, nodo27 y nodo28. La arquitectura elegida es que el _job_ maestro corre en el nodo5, y nodo27 y nodo28 se usan para lanzar los _jobs_ hijos que realizan el análisis del _pipeline_. Todo esto ya viene configurado en `recursos_hpc.config` y en `scripts/lanzar_hpc.slurm`. Ajusta tu cuenta, partición o los nodos si tu clúster es distinto.
+En el HPC de OMICA (CICESE) el motor es Docker, pero actualmente este solo está instalado en los siguientes nodos: nodo5, nodo27 y nodo28. La arquitectura elegida es que el _job_ maestro corre en uno de esos tres nodos (es ligero: 2 CPU, 4 GB) y nodo27 y nodo28 se usan para lanzar los _jobs_ hijos que realizan el análisis del _pipeline_. Como el maestro pesa poco, puede compartir nodo27/nodo28 con las tareas. Todo esto ya viene configurado en `recursos_hpc.config`, en `scripts/lanzar_hpc.slurm` y en `NODOS_MAESTRO` (parametros.sh). Ajusta tu cuenta, partición o los nodos si tu clúster es distinto.
 
-Para correr el _pipeline_ en el HPC, lanza el _job_ maestro (tiene que permanecer vivo durante todo el análisis):
+Para correr el _pipeline_ en el HPC, lanza el _job_ maestro con el wrapper, que elige el primer nodo permitido con hueco (tiene que permanecer vivo durante todo el análisis):
 
 ```bash
-sbatch scripts/lanzar_hpc.slurm
+bash scripts/lanzar_hpc.sh
 ```
 
-Como alternativa, corre `bash scripts/03_ejecutar_ampliseq.sh` a mano desde nodo5 dentro de `tmux` o `screen`.
+También puedes enviarlo directo con `sbatch scripts/lanzar_hpc.slurm` (el maestro va a nodo5), o correr `bash scripts/03_ejecutar_ampliseq.sh` a mano dentro de `tmux` o `screen`.
 
 ### b) Marcador: `its`, `16s` o `18s`
 
@@ -104,7 +105,7 @@ bash scripts/03_ejecutar_ampliseq.sh
 
 > **En el HPC:** define `ENTORNO="hpc"` en `configuracion/parametros.sh`, corre los
 > pasos 1 y 2 en el clúster y, en vez del paso 3, lanza el _job_ maestro:
-> `sbatch scripts/lanzar_hpc.slurm` (corre en nodo5 y usa Docker en nodo27/nodo28).
+> `bash scripts/lanzar_hpc.sh` (corre en uno de nodo5/27/28 y usa Docker en nodo27/nodo28).
 
 Para revisar el comando sin ejecutarlo:
 ```bash
@@ -199,9 +200,10 @@ bash scripts/04_resumen_tiempos.sh        # usa el trace más reciente
 - **Las tareas fallan por Docker (HPC)** → asegúrate de que se fijen a los nodos
   con Docker. En `configuracion/recursos_hpc.config`, `--nodelist=nodo27,nodo28`
   limita las tareas a esos nodos, ajústalo si Docker está en otros nodos de tu clúster.
-- **El _job_ maestro no inicia (HPC)** → revisa que `--nodelist=nodo5`, tu cuenta y
-  tu partición existan en `scripts/lanzar_hpc.slurm`, y que `conda` esté disponible
-  en nodo5 (carga el módulo o ajusta la ruta en el script).
+- **El _job_ maestro no inicia (HPC)** → revisa que los nodos de `NODOS_MAESTRO`
+  (parametros.sh), tu cuenta y tu partición existan, y que `conda` esté disponible
+  en ellos (carga el módulo o ajusta la ruta en `scripts/lanzar_hpc.slurm`). Si
+  `lanzar_hpc.sh` no encuentra hueco, encola en el nodo con más CPUs libres.
 - **Se queda sin memoria / se congela la laptop** → baja `queueSize` (de 4 a 2)
   en `configuracion/recursos_local.config`.
 - **Las tareas no entran a la cola (HPC)** → revisa la cuenta y la partición en

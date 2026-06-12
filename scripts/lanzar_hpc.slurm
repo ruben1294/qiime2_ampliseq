@@ -2,6 +2,8 @@
 #SBATCH --job-name=ampliseq_maestro
 #SBATCH --account=metagenomica
 #SBATCH --partition=cicese
+# Nodo por defecto si lanzas este .slurm directo. scripts/lanzar_hpc.sh lo
+# sobrescribe con el primer nodo permitido (NODOS_MAESTRO) que tenga hueco.
 #SBATCH --nodelist=nodo5
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -16,9 +18,14 @@
 #  lanzar_hpc.slurm
 #  Autor: Rubén Castañeda-Martínez
 # -----------------------------------------------------------------------------
-#  Lanza el pipeline en el HPC de OMICA (CICESE). El job maestro es un orquestador que corre en nodo5, Nextflow manda cada tarea a SLURM y esas tareas usan Docker
-#  en los nodos que lo tienen (al momento, solamente nodo27 y nodo28). Por eso el job maestro pide pocos
-#  recursos (2 CPU, 4 GB). Este debe mantenerse vivo durante todo el análisis.
+#  Lanza el pipeline en el HPC de OMICA (CICESE). El job maestro es un orquestador
+#  ligero (2 CPU, 4 GB) que corre en uno de nodo5/nodo27/nodo28; Nextflow manda cada
+#  tarea a SLURM y esas tareas usan Docker en nodo27 y nodo28. Este maestro debe
+#  mantenerse vivo durante todo el análisis.
+#
+#  Para elegir el nodo automáticamente usa el wrapper (recomendado):
+#     bash scripts/lanzar_hpc.sh
+#  Este .slurm directo manda el maestro a nodo5 (ver --nodelist abajo).
 #
 #  Antes de iniciarlo:
 #    1) En configuracion/parametros.sh fija ENTORNO="hpc" y MARCADOR.
@@ -26,7 +33,9 @@
 #       con Nextflow + Java en el clúster).
 #    3) Genera la hoja de muestras: scripts/01_generar_samplesheet.sh
 #
-#  Uso (desde la raíz del repo):  sbatch scripts/lanzar_hpc.slurm
+#  Uso (desde la raíz del repo):
+#     bash scripts/lanzar_hpc.sh        (elige el nodo automáticamente, recomendado)
+#     sbatch scripts/lanzar_hpc.slurm   (directo, el maestro va a nodo5)
 # =============================================================================
 set -euo pipefail
 

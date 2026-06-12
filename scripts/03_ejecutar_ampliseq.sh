@@ -68,8 +68,8 @@ case "$MOTOR" in
     *) log_error "MOTOR no válido: '$MOTOR' (usa docker, singularity, apptainer o conda)"; exit 1 ;;
 esac
 
-# Que el motor responda antes de empezar. En HPC el maestro (nodo5) solo manda
-# las tareas a SLURM y el motor corre en los nodos de cómputo (nodo27, nodo28),
+# Que el motor responda antes de empezar. En HPC el maestro (nodo5/27/28) solo
+# manda las tareas a SLURM y el motor corre en los nodos de cómputo (nodo27, nodo28),
 # así que aquí solo se exige 'sbatch'. En local el motor sí corre en esta máquina.
 if [ "$ENTORNO" = "hpc" ]; then
     command -v sbatch >/dev/null 2>&1 \

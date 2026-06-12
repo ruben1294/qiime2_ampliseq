@@ -95,18 +95,20 @@ fi
 
 # Sin versión fija, forzamos la más reciente (conda install no siempre sube la ya instalada).
 if [ -z "${VERSION_NEXTFLOW:-}" ]; then
-    log_info "Sin versión fija: actualizando Nextflow a la más reciente disponible…"
+    log_info "Sin versión fija, actualizando Nextflow a la más reciente disponible…"
     conda update -n "$ENV_LANZADOR" -y nextflow \
-      || log_warn "No pude actualizar Nextflow; se queda la versión instalada."
+      || log_warn "No pude actualizar Nextflow, se queda la versión instalada."
 fi
 
 conda activate "$ENV_LANZADOR"
 log_info "Entorno '$ENV_LANZADOR' activo."
 
 # 5) nf-core tools (opcional, no es indispensable para ejecutar el flujo)
+# El solver clásico de conda se atora resolviendo el árbol de nf-core, forzamos
+# libmamba (rápido) y, con timeout, evitamos que se quede atorado. Si falla, usamos pip.
 if ! command -v nf-core >/dev/null 2>&1; then
     log_info "Instalando nf-core tools…"
-    conda install -n "$ENV_LANZADOR" -y nf-core \
+    timeout 600 conda install -n "$ENV_LANZADOR" -y --solver=libmamba nf-core \
       || pip install --quiet nf-core \
       || log_warn "No se pudo instalar nf-core tools, pero el flujo igual funciona."
 fi
@@ -145,7 +147,7 @@ export NXF_SINGULARITY_CACHEDIR="$DIR_PROYECTO/.cache/singularity"
 export NXF_CONDA_CACHEDIR="$DIR_PROYECTO/.cache/conda"
 mkdir -p "$NXF_SINGULARITY_CACHEDIR" "$NXF_CONDA_CACHEDIR"
 
-# 7) Precargamos el pipeline (queda en caché por si se quiere correr offline)
+# 7) Precargamos el pipeline (se guarda en la caché por si se quiere correr offline)
 log_info "Descargando nf-core/ampliseq r${VERSION_PIPELINE} a la caché local…"
 nextflow pull nf-core/ampliseq -r "${VERSION_PIPELINE}" \
   || log_warn "No se pudo precargar el pipeline, se descargará en la primera ejecución."

@@ -27,6 +27,12 @@ PROYECTO="prueba_ITS"
 # Cada entorno tiene su propio archivo de recursos (ver sección 9).
 ENTORNO="local"
 
+# Nodos donde puede correr el job maestro en el HPC, en orden de preferencia. El
+# maestro es ligero (2 CPU, 4 GB) y puede compartir nodo27/nodo28 con las tareas.
+# scripts/lanzar_hpc.sh toma el primero con hueco. En OMICA son los nodos con
+# Docker: nodo5, nodo27 y nodo28.
+NODOS_MAESTRO="nodo5 nodo27 nodo28"
+
 
 # 3) Marcador a analizar (ITS, 16S o 18S)
 # Qué amplicón vas a analizar:
@@ -49,7 +55,7 @@ MARCADOR="its"
 #   "conda"       = un entorno conda por herramienta, sin contenedor (más lento).
 MOTOR="auto"
 
-# Entorno conda con Nextflow + Java que crea el script 00. Rara vez se cambia.
+# Entorno conda con Nextflow + Java que crea el script 00.
 ENV_LANZADOR="ampliseq-lanzador"
 
 
@@ -65,7 +71,7 @@ CARPETA_FASTQ="datos/crudos"
 # Diseño de las lecturas:
 #   "paired" = pareadas (R1 + R2). Lo normal en Illumina.
 #   "single" = individuales (solo R1).
-DISENO_LECTURAS="paired"
+DISENO_LECTURAS="single"
 
 # Hoja de muestras que genera el script 01 a partir de CARPETA_FASTQ.
 SAMPLESHEET="configuracion/samplesheet.tsv"
