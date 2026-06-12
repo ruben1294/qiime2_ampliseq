@@ -125,6 +125,18 @@ fi
 ENTRADA=()
 if [ "$USAR_SAMPLESHEET" = "si" ]; then
     [ -f "$SAMPLESHEET" ] || { log_error "no existe $SAMPLESHEET. Corre: bash scripts/01_generar_samplesheet.sh"; exit 1; }
+    # En diseño pareado la hoja debe traer la columna fastq_2 con datos en todas
+    # las muestras; si falta, ampliseq aborta a mitad de corrida.
+    if [ "$DISENO_LECTURAS" = "paired" ]; then
+        case "$(head -n1 "$SAMPLESHEET")" in
+            *$'\t'fastq_2*) : ;;
+            *) log_error "DISENO_LECTURAS=paired pero $SAMPLESHEET no tiene columna fastq_2."
+               log_error "  Regenérala con DISENO_LECTURAS=paired (bash scripts/01_generar_samplesheet.sh) o usa single."
+               exit 1 ;;
+        esac
+        sin_r2="$(awk -F'\t' 'NR>1 && $1!="" && $3=="" {c++} END{print c+0}' "$SAMPLESHEET")"
+        [ "$sin_r2" -eq 0 ] || { log_error "DISENO_LECTURAS=paired pero $sin_r2 muestra(s) sin fastq_2 en $SAMPLESHEET. Revisa la hoja o regenérala."; exit 1; }
+    fi
     ENTRADA=( --input "$SAMPLESHEET" )
 else
     ENTRADA=( --input_folder "$CARPETA_FASTQ" )

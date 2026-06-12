@@ -65,7 +65,7 @@ CARPETA_FASTQ="datos/crudos"
 # Diseño de las lecturas:
 #   "paired" = pareadas (R1 + R2). Lo normal en Illumina.
 #   "single" = individuales (solo R1).
-DISENO_LECTURAS="single"
+DISENO_LECTURAS="paired"
 
 # Hoja de muestras que genera el script 01 a partir de CARPETA_FASTQ.
 SAMPLESHEET="configuracion/samplesheet.tsv"

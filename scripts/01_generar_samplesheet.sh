@@ -41,11 +41,11 @@ mkdir -p "$(dirname "$SAMPLESHEET")"
 derivar_nombre() {
     local base="$1"
     base="${base%.fastq.gz}"; base="${base%.fq.gz}"
-    # Quitar sufijos de lectura y de Illumina (de derecha a izquierda)
+    # Quitar el indicador de lectura (uno solo) y luego los sufijos de Illumina.
+    # La alternación evita que un nombre que acaba en _1 (p. ej. una réplica)
+    # pierda ese sufijo después de haber quitado _R1.
     base="$(printf '%s' "$base" \
-        | sed -E 's/_R1_001$//' \
-        | sed -E 's/_R1$//'     \
-        | sed -E 's/_1$//'      \
+        | sed -E 's/_(R1_001|R1|1)$//' \
         | sed -E 's/_L[0-9]{3}$//' \
         | sed -E 's/_S[0-9]+$//')"
     # Sanear: reemplazar caracteres no válidos por "_"
@@ -84,12 +84,22 @@ for r1 in "${R1S[@]}"; do
         continue
     fi
 
-    # Derivar el R2 correspondiente probando los tres estilos de nombre
+    # Derivar el R2 correspondiente. El indicador de lectura va al final del
+    # nombre, antes de la extensión; lo reemplazamos solo ahí (no en la ruta ni
+    # en el nombre de la muestra) probando los tres estilos.
+    dir="$(dirname "$r1")"; nom="$(basename "$r1")"
+    cuerpo="$nom"; ext=""
+    case "$nom" in
+        *.fastq.gz) ext=".fastq.gz"; cuerpo="${nom%.fastq.gz}" ;;
+        *.fq.gz)    ext=".fq.gz";    cuerpo="${nom%.fq.gz}" ;;
+    esac
     r2=""
     for par in "_R1_001:_R2_001" "_R1:_R2" "_1:_2"; do
         a="${par%%:*}"; b="${par##*:}"
-        cand="${r1/$a/$b}"
-        if [ "$cand" != "$r1" ] && [ -f "$cand" ]; then r2="$cand"; break; fi
+        if [ "${cuerpo%"$a"}" != "$cuerpo" ]; then
+            cand="$dir/${cuerpo%"$a"}${b}${ext}"
+            if [ -f "$cand" ]; then r2="$cand"; break; fi
+        fi
     done
 
     if [ -z "$r2" ]; then
@@ -103,7 +113,7 @@ done
 log_info "Hoja de muestras creada: $SAMPLESHEET"
 log_info "Muestras escritas: $N"
 log_info "  ---- Vista previa ----"
-column -t -s $'\t' "$SAMPLESHEET" | head -n 6
+head -n 6 "$SAMPLESHEET" | column -t -s $'\t'
 log_info "  ----------------------"
 log_info "Revisa el archivo y corrige los nombres de las muestras si es necesario."
 log_info "(Deben ser únicos, empezar con letra y usar solo letras/números/_)."

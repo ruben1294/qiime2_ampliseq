@@ -30,7 +30,7 @@ qiime2_ampliseq/
 │   ├── recursos_hpc.config            ← recursos, cola y nodos con Docker del HPC (SLURM)
 │   ├── marcador_its.yaml              ← parámetros del análisis de ITS (hongos)
 │   ├── marcador_16s.yaml              ← parámetros del análisis de 16S (procariotas)
-│   ├── marcador_18s.yaml              ← parámetros del análisis de 18S (microeucariotas)
+│   ├── marcador_18s.yaml              ← parámetros del análisis de 18S (eucariotas)
 │   ├── primers_ITS.tsv                ← catálogo de primers ITS estándar
 │   ├── primers_16S.tsv                ← catálogo de primers 16S estándar
 │   ├── primers_18S.tsv                ← catálogo de primers 18S estándar
@@ -55,8 +55,7 @@ qiime2_ampliseq/
 
 ## 2. Decisiones del flujo
 
-Al iniciar, los scripts te preguntan dónde correrás el flujo y qué marcador analizarás (si no las has fijado antes). Para no responder cada vez, definelas en `configuracion/parametros.sh`; en un HPC es
-obligatorio definirlas si lanzas el _pipeline_ sin terminal interactiva.
+Al iniciar, los scripts te preguntan dónde correrás el flujo y qué marcador analizarás (si no las has fijado antes). Para no responder cada vez, defínelas en `configuracion/parametros.sh`. En un HPC es obligatorio definirlas si lanzas el _pipeline_ sin terminal interactiva.
 
 ### a) Entorno: `local` o `hpc`
 
