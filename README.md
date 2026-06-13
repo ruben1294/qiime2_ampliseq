@@ -1,8 +1,7 @@
-# Análisis de amplicones (ITS de hongos / 16S de procariotas / 18S de eucariotas) con nf-core/ampliseq
+# _Metabarcoding_ (ITS de hongos / 16S de procariotas / 18S de eucariotas) con nf-core/ampliseq
 
-Flujo para analizar amplicones a partir de secuenciación Illumina, con tres
-marcadores posibles: la región ITS (*Internal Transcribed Spacer*) de hongos, el
-gen 16S rDNA de procariotas o el gen 18S rDNA de eucariotas.
+Flujo para hacer un análisis de _metabarcoding_ (también conocido como análisis de amplicones) a partir de secuenciación Illumina, con tres
+marcadores posibles: la región ITS (*Internal Transcribed Spacer*) de hongos, el gen 16S rDNA de procariotas o el gen 18S rDNA de eucariotas.
 
 Usa [nf-core/ampliseq](https://nf-co.re/ampliseq) (v2.17.0), que ejecuta:
 control de calidad (FastQC), eliminación de *primers* (cutadapt), inferencia de
@@ -226,13 +225,18 @@ bash scripts/04_resumen_tiempos.sh        # usa el trace más reciente
 
 ## 7. Cómo citar
 
-Si usas este _pipeline_, cita a nf-core/ampliseq, DADA2, cutadapt, QIIME2, ITSx (en ITS) y la base de datos correspondiente. nf-core genera la lista de citas en `resultados/<PROYECTO>/pipeline_info/`.
-
-- nf-core: Ewels et al. (2020) *Nat Biotechnol*. https://nf-co.re/ampliseq
-- UNITE Community: https://unite.ut.ee
-- SILVA: Quast et al. (2013) *Nucleic Acids Res*. https://www.arb-silva.de
-- PR2: Guillou et al. (2013) *Nucleic Acids Res*. https://pr2-database.org
+### Este repositorio
 
 Si este repo te ayudó, te agradecería una estrellita ⭐ y una cita:
 
-Castañeda-Martínez, R. (2026). QIIME2 ampliseq: uso de nf-core para realizar un análisis de amplicones. [Software]. GitHub. https://github.com/ruben1294/qiime2_ampliseq
+Castañeda-Martínez, R. (2026). *QIIME2 ampliseq: análisis de amplicones con nf-core/ampliseq* [Software]. GitHub. https://github.com/ruben1294/qiime2_ampliseq
+
+### El _pipeline_ y sus herramientas
+
+Si usas este flujo, hay que citar a nf-core/ampliseq y las herramientas y bases de datos que ejecuta (DADA2, cutadapt, QIIME2, ITSx en ITS, y la base de datos correspondiente). nf-core genera la lista completa de citas, con versiones y DOIs, en `resultados/<PROYECTO>/pipeline_info/`. Las principales son:
+
+- nf-core/ampliseq: Straub et al. (2020) *Front Microbiol* 11:550420. https://doi.org/10.3389/fmicb.2020.550420
+- nf-core: Ewels et al. (2020) *Nat Biotechnol* 38:276–278. https://doi.org/10.1038/s41587-020-0439-x
+- UNITE Community (ITS): https://unite.ut.ee
+- SILVA (16S/18S): Quast et al. (2013) *Nucleic Acids Res* 41:D590–D596. https://www.arb-silva.de
+- PR2 (18S): Guillou et al. (2013) *Nucleic Acids Res* 41:D597–D604. https://pr2-database.org
