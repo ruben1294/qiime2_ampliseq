@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # =============================================================================
 #  entorno.sh
 #  Autor: Rubén Castañeda-Martínez

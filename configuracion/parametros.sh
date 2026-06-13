@@ -70,7 +70,7 @@ NODOS_TAREAS_DOCKER="nodo27 nodo28"
 # Solo para motor apptainer/singularity (si IT lo instala): las imágenes .sif y las
 # bases se precargan una vez en el nodo interactivo y viven en LUSTRE compartido.
 #   DIR_BASES_HPC        carpeta raíz de bases de datos en LUSTRE
-#   DIR_CACHE_SINGULARITY carpeta de imágenes .sif (la llena scripts/precargar_imagenes_hpc.sh)
+#   DIR_CACHE_SINGULARITY carpeta de imágenes .sif (la llena scripts/precargar_imagenes_apptainer_hpc.sh)
 # Ajústalas a una ruta donde tengas permiso de escritura.
 DIR_BASES_HPC="/LUSTRE/bioinformatica_data/BD/metagenomica"
 DIR_CACHE_SINGULARITY="$DIR_BASES_HPC/cache_singularity_ampliseq"

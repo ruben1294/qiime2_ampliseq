@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  precargar_imagenes_hpc.sh
+#  precargar_imagenes_apptainer_hpc.sh
 #  Autor: Rubén Castañeda-Martínez
 # -----------------------------------------------------------------------------
 #  Precarga las imágenes de contenedor (.sif) de nf-core/ampliseq en la caché
@@ -11,7 +11,7 @@
 #  'nf-core download', que baja el pipeline y todas sus imágenes y las deja en la
 #  caché (modo 'amend'). Luego el script 03 corre offline leyéndolas de ahí.
 #
-#  Uso (desde la raíz del repo):  bash scripts/precargar_imagenes_hpc.sh
+#  Uso (desde la raíz del repo):  bash scripts/precargar_imagenes_apptainer_hpc.sh
 # =============================================================================
 set -euo pipefail
 
@@ -19,7 +19,7 @@ DIR_PROYECTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$DIR_PROYECTO"
 source "configuracion/parametros.sh"
 source "scripts/lib/registro.sh"
-iniciar_registro "precargar_imagenes_hpc"
+iniciar_registro "precargar_imagenes_apptainer_hpc"
 
 # Entorno con nextflow + nf-core
 if command -v conda >/dev/null 2>&1; then

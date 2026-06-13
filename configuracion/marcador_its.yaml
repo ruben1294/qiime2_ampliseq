@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 #  Parámetros de nf-core/ampliseq para amplicones de ITS de hongos. El script 03
 #  lo pasa a Nextflow con -params-file cuando se define MARCADOR="its". Ajusta los primers
-#  y la base de datos a tu experimento. El catálogo de primers estándar está en primers_ITS.tsv.
+#  y la base de datos a tu experimento. El catálogo de primers estándar está en primers_its.tsv.
 # =============================================================================
 
 # Primers (por defecto fITS7 / ITS4)

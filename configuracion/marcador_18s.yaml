@@ -4,7 +4,7 @@
 #  Parámetros de nf-core/ampliseq para amplicones de 18S de eucariotas. El
 #  script 03 lo pasa a Nextflow con -params-file cuando se define a MARCADOR="18s".
 #  Ajusta los primers y la base de datos a tu experimento, el catálogo de primers
-#  está en primers_18S.tsv.
+#  está en primers_18s.tsv.
 # =============================================================================
 
 

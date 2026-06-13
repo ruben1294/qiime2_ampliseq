@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # =============================================================================
 #  registro.sh
 #  Autor: Rubén Castañeda-Martínez
@@ -40,11 +41,16 @@ _configurar_colores() {
 }
 _configurar_colores
 
+# Cuenta los errores registrados con log_error. Un verificador (p. ej. el script
+# 02) lo consulta al final para salir con código ≠ 0 si hubo problemas, sin abortar
+# en el primero. Ojo: un log_error dentro de un subshell no actualiza este contador.
+LOG_ERRORES=0
+
 # Se usa printf con %s para el mensaje, de modo que un '%' en el texto no se
 # interprete. El color envuelve la línea y se resetea al final.
 log_info()  { printf '%s[%s] [INFO] %s%s\n'  "$C_INFO"  "$(date '+%Y-%m-%d %H:%M:%S')" "$*" "$C_RESET"; }
 log_warn()  { printf '%s[%s] [WARN] %s%s\n'  "$C_WARN"  "$(date '+%Y-%m-%d %H:%M:%S')" "$*" "$C_RESET"; }
-log_error() { printf '%s[%s] [ERROR] %s%s\n' "$C_ERROR" "$(date '+%Y-%m-%d %H:%M:%S')" "$*" "$C_RESET" >&2; }
+log_error() { LOG_ERRORES=$((LOG_ERRORES + 1)); printf '%s[%s] [ERROR] %s%s\n' "$C_ERROR" "$(date '+%Y-%m-%d %H:%M:%S')" "$*" "$C_RESET" >&2; }
 log_debug() { printf '%s[%s] [DEBUG] %s%s\n' "$C_DEBUG" "$(date '+%Y-%m-%d %H:%M:%S')" "$*" "$C_RESET"; }
 
 # iniciar_registro <nombre> [carpeta_logs]

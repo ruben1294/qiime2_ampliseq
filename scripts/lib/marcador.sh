@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # =============================================================================
 #  marcador.sh
 #  Autor: Rubén Castañeda-Martínez

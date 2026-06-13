@@ -1,0 +1,38 @@
+name: shellcheck
+
+# Lint estático de los scripts bash del repo. Corre en cada push/PR que toque
+# scripts o la configuración bash. El umbral y las reglas las gobierna .shellcheckrc.
+on:
+  push:
+    paths:
+      - 'scripts/**'
+      - 'configuracion/parametros.sh'
+      - '.shellcheckrc'
+      - '.github/workflows/shellcheck.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'configuracion/parametros.sh'
+      - '.shellcheckrc'
+
+jobs:
+  shellcheck:
+    name: Lint de scripts bash
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Versión anclada (la misma que se usa en local), por reproducibilidad.
+      - name: Instalar ShellCheck v0.11.0
+        run: |
+          ver="v0.11.0"
+          url="https://github.com/koalaman/shellcheck/releases/download/${ver}/shellcheck-${ver}.linux.x86_64.tar.xz"
+          curl -fsSL "$url" | tar -xJ
+          sudo install "shellcheck-${ver}/shellcheck" /usr/local/bin/shellcheck
+          shellcheck --version
+
+      # Umbral 'warning': falla solo en error/warning. Los info benignos (el $ de
+      # AWK, ls informativo, etc.) quedan fuera del gate. El seguir los `source`
+      # (external-sources) y el silenciar SC1091 vienen de .shellcheckrc.
+      - name: Correr ShellCheck
+        run: shellcheck --severity=warning scripts/*.sh scripts/lib/*.sh scripts/lanzar_hpc.slurm

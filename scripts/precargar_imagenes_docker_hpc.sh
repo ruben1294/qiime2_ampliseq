@@ -35,7 +35,7 @@ command -v srun     >/dev/null 2>&1 || { log_error "no encontré 'srun'. Corre e
 
 seleccionar_marcador   # fija CONFIG_MARCADOR según MARCADOR
 
-NODOS=( ${NODOS_TAREAS_DOCKER:-nodo27 nodo28} )
+read -ra NODOS <<< "${NODOS_TAREAS_DOCKER:-nodo27 nodo28}"
 
 # Entrada para que 'nextflow inspect' pueda resolver el grafo (igual que el script 03)
 if [ "$USAR_SAMPLESHEET" = "si" ] && [ -f "$SAMPLESHEET" ]; then

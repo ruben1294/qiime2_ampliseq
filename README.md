@@ -1,5 +1,7 @@
 # _Metabarcoding_ (ITS de hongos / 16S de procariotas / 18S de eucariotas) con nf-core/ampliseq
 
+[![shellcheck](https://github.com/ruben1294/qiime2_ampliseq/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/ruben1294/qiime2_ampliseq/actions/workflows/shellcheck.yml)
+
 Flujo para hacer un análisis de _metabarcoding_ (también conocido como análisis de amplicones) a partir de secuenciación Illumina, con tres
 marcadores posibles: la región ITS (*Internal Transcribed Spacer*) de hongos, el gen 16S rDNA de procariotas o el gen 18S rDNA de eucariotas.
 
@@ -30,9 +32,9 @@ qiime2_ampliseq/
 │   ├── marcador_its.yaml              ← parámetros del análisis de ITS (hongos)
 │   ├── marcador_16s.yaml              ← parámetros del análisis de 16S (procariotas)
 │   ├── marcador_18s.yaml              ← parámetros del análisis de 18S (eucariotas)
-│   ├── primers_ITS.tsv                ← catálogo de primers ITS estándar
-│   ├── primers_16S.tsv                ← catálogo de primers 16S estándar
-│   ├── primers_18S.tsv                ← catálogo de primers 18S estándar
+│   ├── primers_its.tsv                ← catálogo de primers ITS estándar
+│   ├── primers_16s.tsv                ← catálogo de primers 16S estándar
+│   ├── primers_18s.tsv                ← catálogo de primers 18S estándar
 │   └── samplesheet.tsv                ← (lo genera el script 01)
 ├── scripts/
 │   ├── 00_instalar_dependencias.sh    ← verifica e instala todo lo que falte
@@ -43,7 +45,7 @@ qiime2_ampliseq/
 │   ├── lanzar_hpc.sh                  ← lanza el job maestro en el HPC (elige nodo con hueco)
 │   ├── lanzar_hpc.slurm               ← script SLURM del job maestro (lo envía el wrapper)
 │   ├── precargar_imagenes_docker_hpc.sh ← precarga imágenes Docker en nodo27/28 (HPC)
-│   ├── precargar_imagenes_hpc.sh      ← precarga imágenes .sif en LUSTRE (si hay Apptainer)
+│   ├── precargar_imagenes_apptainer_hpc.sh ← precarga imágenes .sif en LUSTRE (si hay Apptainer)
 │   ├── descargar_datos_prueba.sh      ← baja un set pequeño y estándar para probar
 │   └── lib/                           ← funciones comunes (registro, entorno y marcador)
 ├── datos/crudos/                       ← ⬅️ pon aquí tus FASTQ (.fastq.gz)
@@ -155,7 +157,7 @@ Cada archivo `marcador_*.yaml` define los parámetros propios del análisis. Ed�
 | `dada_ref_taxonomy` | `unite-fungi=10.0` | `silva=138` | `pr2=5.1.0` (o SILVA, ver nota) |
 | `addsh` | hipótesis de especie de UNITE | (no aplica) | (no aplica) |
 
-Puedes encontrar los catálogos de _primers_ estándar en `configuracion/primers_ITS.tsv`, `configuracion/primers_16S.tsv` y `configuracion/primers_18S.tsv`. Copia las secuencias que uses al `.yaml`
+Puedes encontrar los catálogos de _primers_ estándar en `configuracion/primers_its.tsv`, `configuracion/primers_16s.tsv` y `configuracion/primers_18s.tsv`. Copia las secuencias que uses al `.yaml`
 que corresponda. Los _presets_ más comunes son:
 
 - **ITS:** `fITS7`/`ITS4` (ITS2), `ITS1F`/`ITS2` (ITS1), `ITS3`/`ITS4` (ITS2).
@@ -229,7 +231,7 @@ bash scripts/04_resumen_tiempos.sh        # usa el trace más reciente
 
 Si este repo te ayudó, te agradecería una estrellita ⭐ y una cita:
 
-Castañeda-Martínez, R. (2026). *QIIME2 ampliseq: análisis de amplicones con nf-core/ampliseq* [Software]. GitHub. https://github.com/ruben1294/qiime2_ampliseq
+Castañeda-Martínez, R. (2026). *QIIME2 ampliseq: metabarcoding con nf-core/ampliseq* (v0.1) [Software]. GitHub. https://github.com/ruben1294/qiime2_ampliseq
 
 ### El _pipeline_ y sus herramientas
 

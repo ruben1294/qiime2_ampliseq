@@ -19,7 +19,7 @@ cd "$DIR_PROYECTO"
 source "configuracion/parametros.sh"
 
 # Nodos permitidos para el maestro (orden de preferencia) y partición de SLURM
-NODOS=( ${NODOS_MAESTRO:-nodo5 nodo27 nodo28} )
+read -ra NODOS <<< "${NODOS_MAESTRO:-nodo5 nodo27 nodo28}"
 PARTICION="cicese"
 
 command -v sbatch >/dev/null 2>&1 \

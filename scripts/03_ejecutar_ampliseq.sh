@@ -61,7 +61,7 @@ if [ "$DRY_RUN" != "si" ]; then
 fi
 
 # Cachés de Nextflow. En HPC con motor apptainer/singularity las imágenes .sif viven
-# en LUSTRE compartido (precargadas con scripts/precargar_imagenes_hpc.sh) para que
+# en LUSTRE compartido (precargadas con scripts/precargar_imagenes_apptainer_hpc.sh) para que
 # los nodos de cómputo, sin internet, las lean. En el resto, caché local del proyecto.
 if [ "$ENTORNO" = "hpc" ] && { [ "$MOTOR" = "apptainer" ] || [ "$MOTOR" = "singularity" ]; }; then
     export NXF_SINGULARITY_CACHEDIR="${DIR_CACHE_SINGULARITY:-$DIR_PROYECTO/.cache/singularity}"
@@ -136,7 +136,7 @@ if [ "$DRY_RUN" != "si" ]; then
             if [ -z "$(ls -A "$NXF_SINGULARITY_CACHEDIR" 2>/dev/null)" ]; then
                 log_error "La caché de imágenes está vacía: $NXF_SINGULARITY_CACHEDIR"
                 log_error "  Precárgalas en el nodo interactivo (con internet):"
-                log_error "    bash scripts/precargar_imagenes_hpc.sh"
+                log_error "    bash scripts/precargar_imagenes_apptainer_hpc.sh"
                 exit 1
             fi
             log_info "Imágenes de contenedor desde la caché: $NXF_SINGULARITY_CACHEDIR"

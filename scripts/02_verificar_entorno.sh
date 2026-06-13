@@ -11,7 +11,9 @@
 set -uo pipefail
 
 DIR_PROYECTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$DIR_PROYECTO"
+# Si no podemos entrar al proyecto, nada más funciona (no se leerían parametros.sh
+# ni las libs): es el único punto donde el verificador sí aborta de inmediato.
+cd "$DIR_PROYECTO" || { echo "ERROR: no pude entrar al directorio del proyecto: $DIR_PROYECTO" >&2; exit 1; }
 source "configuracion/parametros.sh"
 
 source "scripts/lib/registro.sh"
@@ -171,3 +173,14 @@ log_info "   Primers:                 FW=${FW:-?}${RV:+  RV=$RV}"
 log_info "   Base de datos taxonómica:  ${TAXONOMIA:-?}"
 log_info "   Diseño de lecturas:      $DISENO_LECTURAS"
 log_info "=========================================================================="
+
+# El verificador corre sin 'set -e' a propósito: recorre TODO el entorno y reporta
+# cada problema con log_error sin abortar en el primero. Ya con la lista completa,
+# refleja el resultado en el código de salida (≠ 0 si hubo algún error), para poder
+# encadenarlo (p. ej. 02 && 03) o usarlo en automatización.
+if [ "${LOG_ERRORES:-0}" -gt 0 ]; then
+    log_warn "Verificación terminada con $LOG_ERRORES problema(s). Revisa los [ERROR] de arriba y corrígelos."
+    exit 1
+fi
+log_info "Verificación terminada: entorno listo, sin errores."
+exit 0

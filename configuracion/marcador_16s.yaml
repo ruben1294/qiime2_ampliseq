@@ -4,7 +4,7 @@
 #  Parámetros de nf-core/ampliseq para amplicones de 16S de procariotas. El
 #  script 03 lo pasa a Nextflow con -params-file cuando se define a MARCADOR="16s". Ajusta
 #  los primers y la base de datos a tu experimento, el catálogo de primers está en
-#  primers_16S.tsv.
+#  primers_16s.tsv.
 # =============================================================================
 
 # Primers (por defecto 515F / 806R, región V4)
