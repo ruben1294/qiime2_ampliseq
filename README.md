@@ -77,15 +77,13 @@ bash scripts/lanzar_hpc.sh
 
 También puedes enviarlo directo con `sbatch scripts/lanzar_hpc.slurm` (el maestro va a nodo5), o correr `bash scripts/03_ejecutar_ampliseq.sh` a mano dentro de `tmux` o `screen`.
 
-#### HPC de OMICA (internet restringido)
+#### HPC de OMICA
 
-En OMICA el internet general está bloqueado, pero los nodos con Docker (nodo27/28) **sí alcanzan el registro de contenedores** (`quay.io`). El maestro corre en modo offline para el pipeline (`NXF_OFFLINE=true`, automático en `ENTORNO=hpc`, usa la copia cacheada), y las imágenes se jalan al correr. Pasos:
+En OMICA el internet general está bloqueado, pero los nodos con Docker (nodo5/nodo27/28) sí conectan con el registro de contenedores (`quay.io`). El *job* maestro corre en modo *offline* para el *pipeline* (`NXF_OFFLINE=true`, automático en `ENTORNO=hpc`, usa la copia cacheada), y las imágenes se jalan al correr. Pasos:
 
-1. **Pipeline** (lo hace el script 00, en el nodo interactivo con internet): `NXF_OFFLINE=false nextflow pull nf-core/ampliseq -r 2.17.0`.
-2. **Imágenes de contenedor** (`MOTOR="docker"`, el default): la conectividad al registro es intermitente, así que conviene precargarlas una vez en cada nodo: `bash scripts/precargar_imagenes_docker_hpc.sh`. Ese paso también deja cacheados los plugins de Nextflow que el maestro usará offline.
-3. **Bases taxonómicas**: si los nodos no alcanzan los servidores de las bases (UNITE/SILVA/PR2), descárgalas en `DIR_BASES_HPC` (LUSTRE) y apunta el YAML del marcador a los archivos locales (`dada_ref_tax_custom`, etc.). Cada `marcador_*.yaml` trae el scaffolding comentado y el comando para sacar la URL/archivo exacto del pipeline.
-
-Si IT instala **Apptainer/Singularity** (lo más limpio para air-gapped: imágenes `.sif` en disco compartido, sin precargar por nodo), el repo ya está listo: pon `MOTOR="apptainer"` y corre `bash scripts/precargar_imagenes_hpc.sh`. El script 03 valida que el pipeline (y, con apptainer, las imágenes) estén en la caché antes de lanzar.
+1. ***Pipeline*** (lo hace el script 00, en el nodo interactivo con internet): `NXF_OFFLINE=false nextflow pull nf-core/ampliseq -r 2.17.0`.
+2. **Imágenes de contenedor** (`MOTOR="docker"`, el predeterminado): la conectividad al registro es intermitente, así que conviene precargarlas una vez en cada nodo con: `bash scripts/precargar_imagenes_docker_hpc.sh`. Ese paso también deja cacheados los *plugins* de Nextflow que el *job* maestro usará *offline*.
+3. **Bases de datos taxonómicos**: si los nodos no alcanzan los servidores de las bases (UNITE/SILVA/PR2), descárgalas en `DIR_BASES_HPC` (LUSTRE) y apunta el YAML del marcador a los archivos locales (`dada_ref_tax_custom`, etc.). Cada `marcador_*.yaml` trae el *scaffolding* comentado y el comando para sacar la URL o el archivo exacto del *pipeline*.
 
 ### b) Marcador: `its`, `16s` o `18s`
 
@@ -129,10 +127,10 @@ Para diagnosticar el entorno en cualquier momento:
 bash scripts/02_verificar_entorno.sh
 ```
 
-### Probar con datos de ejemplo
+### 3.1 Probar con datos de ejemplo
 
 Para validar el flujo sin tus datos, baja un conjunto pequeño y estándar
-(nf-core/test-datasets) y córrelo de punta a punta:
+(nf-core/test-datasets) y córrelo:
 
 ```bash
 bash scripts/descargar_datos_prueba.sh 16s   # 16S pareado (515F/806R)
@@ -169,8 +167,7 @@ que corresponda. Los _presets_ más comunes son:
 > sirve para ITS; SILVA, GTDB o Greengenes para 16S; y PR2 o SILVA para 18S).
 >
 > **18S con SILVA:** la SILVA de DADA2 que trae ampliseq está optimizada para
-> Bacteria/Archaea y su documentación la marca no apta para eucariotas. Para
-> usar SILVA en 18S hay que usar el clasificador de QIIME2: en
+> Bacteria/Archaea y su documentación la marca no apta para eucariotas. Si quieres usar SILVA en 18S hay que usar el clasificador de QIIME2: en
 > `marcador_18s.yaml`, comenta `dada_ref_taxonomy: "pr2=5.1.0"` y descomenta
 > `qiime_ref_taxonomy: "silva=138"` (la SILVA de QIIME2 es la combinada 16S/18S).
 
